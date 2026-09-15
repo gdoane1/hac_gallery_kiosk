@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hillsborough Arts Council — Gallery &amp; Gift Shop Kiosk</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+  :root {
+    --cream:#F9F5EF; --clay:#C2704A; --clay-light:#EDD5C6;
+    --bark:#5C3D2E; --bark-light:#8A6552; --sage:#7A8C6E;
+    --warm-white:#FEFCF8; --border:rgba(92,61,46,0.15);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    background:#E9E2D8;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 16px;
+    font-family:'Lora',serif;
+  }
+  .page-wrap{width:100%;max-width:960px;}
+  #kiosk{font-family:'Lora',serif;background:var(--cream);min-height:640px;border-radius:16px;overflow:hidden;border:0.5px solid var(--border);position:relative;box-shadow:0 12px 32px rgba(44,26,16,0.12);}
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  /* NAV */
+  .topbar{background:var(--bark);padding:14px 20px;display:flex;align-items:center;gap:0;flex-wrap:wrap;}
+  .gallery-title{font-family:'Playfair Display',serif;color:var(--warm-white);font-size:18px;font-weight:400;letter-spacing:0.02em;flex:1;}
+  .gallery-sub{font-size:11px;color:var(--clay-light);font-style:italic;margin-top:2px;}
+  .nav-tabs{display:flex;gap:4px;flex-shrink:0;}
+  .nav-tab{background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.2);border-radius:6px;color:var(--clay-light);font-family:'Lora',serif;font-size:12px;padding:6px 13px;cursor:pointer;transition:background 0.15s,color 0.15s;}
+  .nav-tab:hover{background:rgba(255,255,255,0.18);}
+  .nav-tab.active{background:var(--clay);color:var(--warm-white);border-color:var(--clay);}
+
+  /* HOME — artists */
+  .section-label{font-family:'Playfair Display',serif;font-size:13px;color:var(--bark-light);font-style:italic;padding:14px 20px 6px;border-bottom:0.5px solid var(--border);margin-bottom:4px;}
+  .artist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 16px 20px;}
+  .artist-card{background:var(--warm-white);border-radius:10px;border:0.5px solid var(--border);padding:12px 10px 10px;cursor:pointer;transition:transform 0.15s,border-color 0.15s;text-align:center;user-select:none;}
+  .artist-card:hover{transform:scale(1.02);border-color:rgba(92,61,46,0.35);}
+  .artist-card:active{transform:scale(0.97);}
+  .avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:17px;color:var(--warm-white);font-weight:400;}
+  .card-name{font-family:'Playfair Display',serif;font-size:12px;color:var(--bark);font-weight:400;line-height:1.3;}
+  .card-medium{font-size:10px;color:var(--bark-light);font-style:italic;margin-top:2px;}
+
+  /* ARTIST DETAIL */
+  .detail-topbar{background:var(--bark);padding:12px 18px;display:flex;align-items:center;gap:12px;}
+  .back-btn{background:rgba(255,255,255,0.12);border:0.5px solid rgba(255,255,255,0.25);border-radius:6px;color:var(--warm-white);font-family:'Lora',serif;font-size:12px;padding:5px 12px;cursor:pointer;flex-shrink:0;transition:background 0.15s;}
+  .back-btn:hover{background:rgba(255,255,255,0.22);}
+  .detail-title{font-family:'Playfair Display',serif;color:var(--warm-white);font-size:16px;font-weight:400;}
+  .detail-med{font-size:11px;color:var(--clay-light);font-style:italic;}
+  .detail-body{padding:18px 22px 24px;display:grid;grid-template-columns:3fr 2fr;gap:22px;}
+  .bio-head{font-family:'Playfair Display',serif;font-size:13px;color:var(--bark);font-weight:400;margin-bottom:8px;padding-bottom:5px;border-bottom:0.5px solid var(--border);}
+  .bio-text{font-size:13px;color:var(--bark-light);line-height:1.75;font-style:italic;}
+  .website-link{display:inline-block;margin-top:10px;font-size:12px;color:var(--clay);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:normal;}
+
+  /* VIDEOS */
+  .videos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px 18px 22px;}
+  .video-card{background:var(--warm-white);border-radius:10px;border:0.5px solid var(--border);overflow:hidden;cursor:pointer;transition:transform 0.15s;user-select:none;}
+  .video-card:hover{transform:scale(1.01);}
+  .video-thumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#2e1f15,#4a2e1c);display:flex;align-items:center;justify-content:center;position:relative;}
+  .play-ring{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--clay-light);display:flex;align-items:center;justify-content:center;opacity:0.85;}
+  .play-tri{width:0;height:0;border-style:solid;border-width:9px 0 9px 16px;border-color:transparent transparent transparent var(--clay-light);margin-left:3px;}
+  .video-info{padding:10px 12px 12px;}
+  .video-title{font-family:'Playfair Display',serif;font-size:13px;color:var(--bark);font-weight:400;}
+  .video-desc{font-size:11px;color:var(--bark-light);font-style:italic;margin-top:3px;}
+  .video-coming{font-size:11px;color:var(--clay);font-style:italic;margin-top:4px;}
+
+  /* HISTORY */
+  .history-body{padding:20px 26px 28px;max-width:720px;}
+  .history-head{font-family:'Playfair Display',serif;font-size:20px;color:var(--bark);font-weight:400;margin-bottom:6px;}
+  .history-sub{font-size:13px;color:var(--clay);font-style:italic;margin-bottom:18px;}
+  .history-section{margin-bottom:18px;}
+  .history-section h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--bark);font-weight:400;margin-bottom:7px;padding-bottom:5px;border-bottom:0.5px solid var(--border);}
+  .history-section p{font-size:13px;color:var(--bark-light);line-height:1.8;font-style:italic;}
+
+  /* FEEDBACK OVERLAY */
+  .feedback-overlay{display:none;position:absolute;inset:0;background:rgba(44,26,16,0.55);align-items:center;justify-content:center;z-index:10;border-radius:16px;}
+  .feedback-overlay.visible{display:flex;animation:fadeIn 0.3s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .feedback-card{background:var(--warm-white);border-radius:14px;padding:26px 30px;max-width:340px;width:90%;text-align:center;border:0.5px solid var(--border);}
+  .f-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--bark);font-weight:400;margin-bottom:5px;}
+  .f-sub{font-size:12px;color:var(--bark-light);font-style:italic;margin-bottom:20px;line-height:1.5;}
+  .emoji-row{display:flex;justify-content:center;gap:14px;margin-bottom:6px;}
+  .emoji-btn{font-size:30px;cursor:pointer;transition:transform 0.15s,opacity 0.15s;background:none;border:none;padding:5px;border-radius:50%;line-height:1;opacity:0.9;}
+  .emoji-btn:hover{transform:scale(1.2);}
+  .emoji-btn.selected{transform:scale(1.25);opacity:1;background:var(--clay-light);}
+  .skip-btn{font-size:11px;color:var(--bark-light);text-decoration:underline;text-underline-offset:3px;cursor:pointer;background:none;border:none;font-family:'Lora',serif;font-style:italic;margin-top:14px;}
+  .emoji-label{display:block;font-size:9px;color:var(--bark-light);font-style:italic;margin-top:2px;text-align:center;}
+  .thank-you{display:none;font-family:'Playfair Display',serif;font-size:15px;color:var(--sage);font-style:italic;padding:8px 0 4px;}
+  .comment-section{display:none;margin-top:16px;text-align:left;}
+  .comment-section textarea{width:100%;min-height:64px;resize:vertical;border:0.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'Lora',serif;font-size:12px;color:var(--bark);background:var(--cream);}
+  .comment-section textarea:focus{outline:1px solid var(--clay);}
+  .send-btn{margin-top:10px;width:100%;background:var(--clay);color:var(--warm-white);border:none;border-radius:8px;padding:9px 0;font-family:'Lora',serif;font-size:12px;cursor:pointer;transition:background 0.15s;}
+  .send-btn:hover{background:var(--bark);}
+
+  /* Responsive */
+  @media (max-width:640px){
+    .artist-grid{grid-template-columns:repeat(2,1fr);}
+    .videos-grid{grid-template-columns:1fr;}
+    .detail-body{grid-template-columns:1fr;}
+    .nav-tab{padding:6px 9px;font-size:11px;}
+    .gallery-title{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<div id="kiosk" aria-label="Hillsborough Arts Council gallery kiosk">
+  <h2 class="sr-only" style="position:absolute;left:-9999px;">Hillsborough Arts Council gallery kiosk — browse artists, watch videos, and learn about the arts.</h2>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="flex:1">
+      <div class="gallery-title">Hillsborough Arts Council</div>
+      <div class="gallery-sub">Gallery &amp; Gift Shop</div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-screen="home">Artists</button>
+      <button class="nav-tab" data-screen="videos">Videos</button>
+      <button class="nav-tab" data-screen="history">History of the Art</button>
+    </div>
+  </div>
+
+  <!-- ARTISTS SCREEN -->
+  <div id="screen-home" class="screen active">
+    <div class="section-label">Tap an artist to read their story</div>
+    <div class="artist-grid" id="artistGrid"></div>
+  </div>
+
+  <!-- ARTIST DETAIL SCREEN -->
+  <div id="screen-detail" class="screen">
+    <div class="detail-topbar">
+      <button class="back-btn" id="backBtn">← Artists</button>
+      <div>
+        <div class="detail-title" id="dName"></div>
+        <div class="detail-med" id="dMed"></div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div>
+        <div class="bio-head">About the artist</div>
+        <p class="bio-text" id="dBio"></p>
+        <span class="website-link" id="dSite"></span>
+      </div>
+      <div>
+        <div class="bio-head">Medium</div>
+        <p class="bio-text" id="dMedFull" style="font-style:normal;font-size:13px;color:var(--bark);"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEOS SCREEN -->
+  <div id="screen-videos" class="screen">
+    <div class="section-label">Artist studio visits &amp; conversations</div>
+    <div class="videos-grid">
+      <div class="video-card">
+        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
+        <div class="video-info">
+          <div class="video-title">Artist Spotlight Series</div>
+          <div class="video-desc">Meet the makers of the HAC Gallery &amp; Gift Shop</div>
+          <div class="video-coming">Videos coming soon — check back!</div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
+        <div class="video-info">
+          <div class="video-title">Studio Visits</div>
+          <div class="video-desc">Behind the scenes in artists' workspaces</div>
+          <div class="video-coming">Videos coming soon — check back!</div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
+        <div class="video-info">
+          <div class="video-title">Process &amp; Craft</div>
+          <div class="video-desc">Watching the work come to life</div>
+          <div class="video-coming">Videos coming soon — check back!</div>
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
+        <div class="video-info">
+          <div class="video-title">Community &amp; Place</div>
+          <div class="video-desc">Art rooted in Hillsborough &amp; Orange County</div>
+          <div class="video-coming">Videos coming soon — check back!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY SCREEN -->
+  <div id="screen-history" class="screen">
+    <div class="history-body">
+      <div class="history-head">History of the Art</div>
+      <div class="history-sub">The Hillsborough Arts Council &amp; its creative community</div>
+      <div class="history-section">
+        <h3>About the Hillsborough Arts Council</h3>
+        <p>The Hillsborough Arts Council (HAC) has long been a gathering place for artists, makers, and art lovers in Orange County, North Carolina. Nestled in the historic town of Hillsborough, the HAC Gallery &amp; Gift Shop provides a vibrant venue for regional artists to share their handcrafted work with the community and visitors alike.</p>
+      </div>
+      <div class="history-section">
+        <h3>The Gallery &amp; Gift Shop</h3>
+        <p>The HAC Gallery &amp; Gift Shop showcases original works by consigning artists who live and work primarily in the greater Hillsborough and Orange County area. From wheel-thrown pottery and forged metalwork to hand-painted silk and botanical jewelry, the gallery reflects the rich diversity of craft traditions and contemporary art practices found in this part of North Carolina.</p>
+      </div>
+      <div class="history-section">
+        <h3>A Living Tradition</h3>
+        <p>The artists you see here carry on a long legacy of making — drawing on traditions from blacksmithing and woodturning to stained glass and textile art — while bringing their own voices, stories, and innovations to each piece. Many are rooted in Hillsborough itself; others travel from across the region to be part of this community. All share a commitment to handcrafted work made with care and intention.</p>
+      </div>
+      <div class="history-section">
+        <h3>Add your gallery's full history here</h3>
+        <p>This section is a placeholder — share the founding story, milestones, notable exhibitions, or anything else that captures the HAC's journey. Let us know and we can fill this in with your real history!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK OVERLAY -->
+  <div class="feedback-overlay" id="feedbackOverlay">
+    <div class="feedback-card">
+      <div class="f-title">How are you enjoying the gallery?</div>
+      <div class="f-sub">Your feedback helps HAC bring more wonderful artists to Hillsborough.</div>
+      <div class="emoji-row" id="emojiRow">
+        <div><button class="emoji-btn" data-label="Love it" title="Love it">😍</button><span class="emoji-label">Love it</span></div>
+        <div><button class="emoji-btn" data-label="Really good" title="Really good">😊</button><span class="emoji-label">Really good</span></div>
+        <div><button class="emoji-btn" data-label="It's okay" title="It's okay">😐</button><span class="emoji-label">It's okay</span></div>
+        <div><button class="emoji-btn" data-label="Not for me" title="Not for me">😕</button><span class="emoji-label">Not for me</span></div>
+      </div>
+      <div class="comment-section" id="commentSection">
+        <textarea id="feedbackComment" placeholder="Anything you'd like to share? (optional)"></textarea>
+        <button class="send-btn" id="sendFeedbackBtn">Send feedback</button>
+      </div>
+      <div class="thank-you" id="thankYou">Thank you! ✦</div>
+      <button class="skip-btn" id="skipBtn">skip for now</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ======= CONFIG =======
+// Paste the URL you get from deploying the Google Apps Script web app here.
+// See the setup instructions for how to create this.
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2EcrvAYuwszRLpv1L8RzU2132cQ4VDsZBTVOZcxYSIy6aA-QS5FVrLcKQgNC2u_q-Yg/exec";
+// =======================
+
+const COLORS = ['#8A6552','#7A8C6E','#C2704A','#5C3D2E','#B8975A','#6A8A7C','#A05C7B','#8C7A42','#5E7A8C','#9A7060','#6E8C70','#7A5C8A','#8C6A3C','#5A7A8C','#8A7A5E'];
+
+const artists = [
+  {name:"Stefanie Levinson",medium:"Pottery, Ceramics, Jewelry, Collages",bio:"I make things that make me smile.",site:""},
+  {name:"Kim Pierce",medium:"Notecards, Jewelry, Mixed Media Art",bio:"I am great!",site:"https://www.instagram.com/hillsborougharts/"},
+  {name:"James Cotter",medium:"Metalwork",bio:"A creative metalworker, skilled in both traditional blacksmithing and modern machine welding, who designs and sculpts whimsical pieces for both home and garden. Each piece blends old-world techniques with contemporary methods — from furniture and lighting fixtures to garden sculptures — meticulously crafted with precision and a touch of whimsy.",site:""},
+  {name:"Mary Ann Peter",medium:"Pottery & Ceramics",bio:"Mary Ann Peter is a potter who lives in downtown Hillsborough and has her studio at her home. She works with both porcelain and stoneware, creating mostly functional pieces. Porcelain pieces are often inscribed and decorated with brushwork in bright colors of nature. More recently she has created porcelain hanging tiles that can embellish windows, drawer pulls and walls.",site:"http://maryannpeterpottery.com"},
+  {name:"Caroline Smith — Studio Adeline",medium:"Glasswork",bio:"Studio Adeline is a modern stained glass studio that blends themes from art deco and art nouveau with updated color palettes and textures. Taking the form of panels, suncatchers, candle holders and other home objects, Studio Adeline brings a touch of beauty to your space.",site:"http://www.studioadeline.glass"},
+  {name:"Kathryn Mathias",medium:"Jewelry",bio:"Kathryn Mathias has been creating unique chainmaille jewelry since 2010, assembling each piece one jump ring at a time using ancient armor crafting techniques. She incorporates hand-cut gemstone cabochons and beads throughout her work, blending her love of rock hounding into her craft.",site:"https://www.facebook.com/icjewelrydesign"},
+  {name:"Jim & Rita Duxbury",medium:"Woodworking, Kaleidoscopes, Woodturnings",bio:"Jim and Rita pride themselves in creating wooden items of beauty that also are designed to function well. Their fascination with wood grains — from the most exotic to native varieties — leads to experiments with new and exciting ideas. Jim's kaleidoscopes are a signature item, custom designed and recipient of numerous awards. Rita and Jim present demonstrations at woodturning clubs, symposiums and workshops throughout the country.",site:"http://www.duxterity.com/ec"},
+  {name:"Ryann Carey",medium:"Original Paintings, Fine Art Prints",bio:"I strive to paint the representational world converged with the emotional response it elicits. I don't seek out places to paint — instead I let my love of observation lead me to capture a moment. I rely heavily on sense memory to portray not only what the eye has seen but the feeling that a space and time evoked. My hope is to create work that conjures up the common thread among us.",site:"https://ryanncarey.wixsite.com/mysite"},
+  {name:"Crawford Horne — Thistle Glen Pottery",medium:"Pottery & Ceramics",bio:"I make utilitarian stoneware pottery intended for everyday use in the home and garden. Most of my work is fired in my self-designed and constructed wood-fueled kiln located outside my home studio. All of my glazes are custom made from raw materials and are food safe.",site:"http://www.ThistleGlenPottery.com"},
+  {name:"Clay Carmichael",medium:"Fine Art Prints, Notecards",bio:"Author-Artist Clay Carmichael lives and works in Carrboro, NC, with her sculptor husband Mike Roig.",site:"http://www.claycarmichael.com"},
+  {name:"Marion Seaman — DarionGlass",medium:"Glasswork",bio:"DarionGlass began with fulfilling a bucket list item of taking stained glass classes and has evolved into all types of glass work — stained glass, fused glass and mosaic glass. We create utilitarian, artistic and whimsical items, always designed to bring joy to the user.",site:"https://darionglass.com/"},
+  {name:"Elaine O'Neil",medium:"Notecards, Fabric & Textile Art, Tea Towels, Embroidery Kits",bio:"I create textile collage art of places and scenes that either have a personal meaning to me or a collective, special value to a community. Much of my work originates from subjects related to my ancestors and fond memories of my childhood in Maine, in addition to symbolic places and landmarks of North Carolina. The scenes I create are inspired to convey a sense of an idyllic and joyful life.",site:"http://ElaineONeil.com"},
+  {name:"Sudie Rakusin",medium:"Original Paintings, Prints, Notecards, Fabric & Textile Art, Mixed Media, Paper-based Work",bio:"Being an animal activist and feminist, my artwork flows from what moves me and from where I find beauty: women, animals, the earth, color, pattern and light. My work includes pen and ink drawings, papier-mâché sculptures, collage, abstracts in cold wax and oil, and 3-dimensional oil on canvas paintings featuring women and animals — testing the boundaries of what a \"painting\" is.",site:"http://sudierakusin.com"},
+  {name:"Phyllis Moody",medium:"Woodworking",bio:"I love trees! I have always been drawn to their magnificent beauty. I enjoy being a tool to celebrate the many differences of each piece as it develops into its uniqueness.",site:""},
+  {name:"Terri Murphy",medium:"Notecards, Woodworking, Photography",bio:"I am a woodturner and a photographer. I strive to honor the endless beauty of our world in my photographic cards and in my wood creations. I enjoy the look, feel and smell of wood as I work with it on the lathe — respecting the tree species, colors, grain patterns, knots, and so many other phenomena in the making of each unique piece.",site:""},
+  {name:"Jamie Lawson",medium:"Mixed Media Art, Metalwork, Pop Pet Art, Stickers & Magnets",bio:"I create bright and fun pop pet artwork, and North Carolina and pet-themed designs. I love creating art that makes people feel good and smile.",site:"http://www.labrottiecreations.com"},
+  {name:"Chantal Lisette Tomiello",medium:"Original Paintings",bio:"Chantal is a French Canadian born artist who currently resides in Raleigh. She works in both oil and acrylics. Self taught and continuously pursuing the intersection of abstraction and realism in both small and larger works, her subject matter varies but the intent for \"play\" and intuitive mark making continue to inspire her.",site:"https://chantalpaints.com"},
+  {name:"Judy Grant",medium:"Original Paintings, Notecards",bio:"I paint portraits of things I love, mostly birds and animals, mostly small. I enjoy traveling to photograph wildlife that I can then paint — all my paintings are from my own photographs. I have been a member of OCAG since 2017.",site:""},
+  {name:"Lynn Schmoock",medium:"Original Paintings, Mixed Media Art",bio:"Creating art is quality time with me where I can discover more about myself in ways I could not imagine and learn to appreciate and partake in this miraculous gift of life within and around. I also very much enjoy the process of learning from others and in turn sharing what I have learned.",site:""},
+  {name:"Ellie Snow",medium:"Fine Art Prints, Jewelry",bio:"Ellie Snow is an artist based in Hillsborough, NC who creates acrylic paintings and hand painted jewelry. Her paintings explore themes surrounding parenting, mental illness, and beauty through abstracted garden scenes and landscapes.",site:"http://www.elliesnow.com"},
+  {name:"Bijal Shah — BiNas By Bijal",medium:"Jewelry, Paper-based Work",bio:"I am a self taught artist, introduced to quilling by my mother in 2019. Since then I have continued to learn, develop my technique and strive to make unique crafted items with vibrant colors. I draw inspiration from the beauty of nature and everyday items that surround us.",site:"https://etsy.com/shop/BiNasByBijal"},
+  {name:"Christine Hager-Braun",medium:"Fabric & Textile Art",bio:"Christine Hager-Braun is an award-winning fiber artist living in Durham, NC. She \"paints\" with fabric and thread to create abstract art. Thematically, her work revolves around the gift of resilience, the power of a positive mindset, and the importance of our emotional well-being. Her art is exhibited across the US and held in private and corporate collections including the Mayo Clinic.",site:"https://soularpowerfabricart.com/"},
+  {name:"Russell Knop",medium:"Pottery & Ceramics",bio:"My first exposure to pottery was in 1968 while a student in the Sandhills area of NC, where I had the good fortune to visit a variety of studio potters. I was particularly drawn to functional high-fire stoneware. I have continued to work primarily with clay — stoneware and raku — as well as teach in community settings with potters of all ages.",site:""},
+  {name:"Rachel Bass",medium:"Jewelry",bio:"Delicate, thoughtfully handcrafted jewelry by North Carolina native Rachel Bass, since 2004.",site:"https://www.instagram.com/rachelbassdesigns/"},
+  {name:"Natalia Torres del Valle",medium:"Mixed Media Art",bio:"Natalia Torres del Valle works out of her studio in Hillsborough, NC. Her work is created with foraged soils and rocks, earth-based pigments, and lake pigments from plants. She is motivated by our current climate crisis and hopes her work illuminates the need to better care for our Earth. Natalia is a Registered Expressive Arts Therapist and a 2023 Acadia National Park Artist-in-Residence.",site:"http://www.nataliatorresdelvalle.com"},
+  {name:"Barbara Younger",medium:"Original Paintings, Mixed Media Art, Paper-based Work",bio:"I create whimsical paintings, mixed media pieces, and gel prints. My work features bold designs, vibrant colors, and happy interpretations that make it popular with both children and adults. I've led art workshops for all ages and visited local schools and libraries to share my work and talk about the creative process. I live in Hillsborough with my husband Cliff.",site:"https://barbarakyounger.com/"},
+  {name:"Pamela G Spurrier",medium:"Fabric & Textile Art",bio:"Pam began painting seriously in 2000 and for at least the past 10 years has been painting on silk, though she also works in watercolor and colored pencil. She moved to NC in 2016 and became a member of Piedmont Silk Painters. Pam teaches silk painting whenever she has an opportunity.",site:""},
+  {name:"Taylor Kennedy",medium:"Pottery & Ceramics",bio:"Taylor Kennedy was born in 1995 and currently lives and works in the Hillsborough, NC area. She graduated from Appalachian State University with a BFA. Her work comes from a very personal place, combining her knowledge from drawing and painting with her functional pottery.",site:"https://www.taylorkennedyart.com"},
+  {name:"Victoria O'Neill — Speedwell Jewelry",medium:"Jewelry",bio:"I am a North Carolina based botanical jewelry artist. I seasonally forage for materials and also grow some of the flowers in my garden. All plants are handpicked and hand pressed by me personally. Because every plant is unique, every piece of jewelry I create is one of a kind.",site:"http://speedwelljewelry.com"},
+  {name:"Judy Maloney",medium:"Fabric & Textile Art, Wearables",bio:"Judy Maloney is a textile and fiber artist who resides in Hillsborough, with studio space at Eno Cloth Mill. She employs surface design, natural dyeing, hand and machine stitch as elements in her work. She also makes paper and fiber art books with found objects, ephemera and vintage fabrics. Her major influences are regular walks in nature on the various trails around Hillsborough.",site:"https://www.instagram.com/judymaloneytextiles"},
+  {name:"Marcia McDade McMann",medium:"Original Paintings, Fine Art Prints, Notecards, Mixed Media, Paper-based Work",bio:"\"I enjoy exploring new techniques in drawing, painting and printmaking to maintain a unique style. My desire is to reconstruct a place from memory and create a sense of calm simplicity. Color, composition and form are the most important tools I use. I love to lose myself in the journey to the surface.\"",site:"http://www.mcdadeart.com"},
+  {name:"Katie Hayes — New South Pattern House",medium:"Block Prints, Notecards, Eco Gift Wrap",bio:"I am a Hillsborough based printmaker specializing in place based design. I use archival, sustainably manufactured papers and NC made inks. I carve in several substrates including linoleum, dense rubber, and recycled \"Eco Karve\" printmaking blocks, and use a wooden hand press to pull each print.",site:"https://newsouthpatternhouse.com"},
+  {name:"Anita Faulkner",medium:"Glasswork, Stained & Fused Glass",bio:"Sweet mystery of life — I have finally found you! GLASS! I held a piece of blue glass to the light and felt like the sky was in my hands. I was hooked and had to learn how to create art with glass. It is a forever learning experience and there is not one minute that I don't appreciate creating art with this beautiful substance. I hope you enjoy my art as much as I enjoy making it!",site:""},
+  {name:"Lynn Burcher — Gilded Lily Glass",medium:"Jewelry",bio:"I create colorful jewelry combining hand-painted enamel, torchwork glass beads, and traditional metal techniques. My current enameling technique is reflective of my interest in printmaking and illustration. I make silkscreens from my drawings to use for the outlines of images on enameled copper bases, then paint the details with vintage china paints and watercolor enamels. Each piece is typically fired in a kiln 5 to 10 times.",site:"https://www.gildedlilyglass.com"}
+];
+
+function initials(name){const w=name.replace(/\s*[-—].*$/,'').trim().split(/\s+/);return(w[0][0]+(w[w.length-1][0]||'')).toUpperCase();}
+
+let clickCount=0, feedbackShown=false, currentScreenName='home';
+const TRIGGER=5;
+function track(){clickCount++;if(!feedbackShown&&clickCount>=TRIGGER){feedbackShown=true;setTimeout(()=>document.getElementById('feedbackOverlay').classList.add('visible'),400);}}
+
+// Build grid
+const grid=document.getElementById('artistGrid');
+artists.forEach((a,i)=>{
+  const card=document.createElement('div');
+  card.className='artist-card';
+  card.innerHTML=`<div class="avatar" style="background:${COLORS[i%COLORS.length]}">${initials(a.name)}</div><div class="card-name">${a.name.split('—')[0].split('–')[0].trim()}</div><div class="card-medium">${a.medium.split(',')[0]}</div>`;
+  card.addEventListener('click',()=>{openDetail(a,i);track();});
+  grid.appendChild(card);
+});
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  currentScreenName=id;
+}
+
+// Nav tabs
+document.querySelectorAll('.nav-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const s=tab.dataset.screen;
+    if(s==='home'){showScreen('home');}
+    else if(s==='videos'){showScreen('videos');}
+    else if(s==='history'){showScreen('history');}
+    track();
+  });
+});
+
+function openDetail(a,i){
+  document.getElementById('dName').textContent=a.name;
+  document.getElementById('dMed').textContent=a.medium.split(',')[0];
+  document.getElementById('dBio').textContent=a.bio;
+  document.getElementById('dMedFull').textContent=a.medium;
+  const siteEl=document.getElementById('dSite');
+  if(a.site){siteEl.textContent='Visit website →';siteEl.onclick=()=>window.open(a.site,'_blank');}
+  else{siteEl.textContent='';}
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-detail').classList.add('active');
+  currentScreenName='detail: '+a.name;
+}
+
+document.getElementById('backBtn').addEventListener('click',()=>{
+  showScreen('home');
+  document.querySelectorAll('.nav-tab').forEach(t=>{t.classList.toggle('active',t.dataset.screen==='home');});
+  track();
+});
+
+// ===== Feedback =====
+let selectedRating = null;
+
+document.querySelectorAll('.emoji-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    selectedRating = btn.dataset.label;
+    document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('commentSection').style.display='block';
+  });
+});
+
+function submitFeedback(){
+  const comment = document.getElementById('feedbackComment').value.trim();
+  const payload = {
+    timestamp: new Date().toISOString(),
+    rating: selectedRating || '(no rating)',
+    comment: comment,
+    screen: currentScreenName
+  };
+
+  if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.indexOf('PASTE_YOUR') === -1) {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).catch(()=>{ /* fail silently — visitor still sees thank-you */ });
+  } else {
+    console.warn('Feedback captured locally (no spreadsheet URL configured yet):', payload);
+  }
+
+  document.getElementById('emojiRow').style.display='none';
+  document.getElementById('commentSection').style.display='none';
+  document.querySelector('.skip-btn').style.display='none';
+  document.getElementById('thankYou').style.display='block';
+  setTimeout(()=>{
+    const overlay = document.getElementById('feedbackOverlay');
+    overlay.classList.remove('visible');
+    // reset for next visitor
+    setTimeout(()=>{
+      selectedRating = null;
+      document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));
+      document.getElementById('feedbackComment').value='';
+      document.getElementById('emojiRow').style.display='flex';
+      document.querySelector('.skip-btn').style.display='inline-block';
+      document.getElementById('thankYou').style.display='none';
+    }, 500);
+  },1800);
+}
+
+document.getElementById('sendFeedbackBtn').addEventListener('click', submitFeedback);
+document.getElementById('skipBtn').addEventListener('click',()=>{
+  document.getElementById('feedbackOverlay').classList.remove('visible');
+});
+</script>
+</body>
+</html>
