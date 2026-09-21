@@ -12,7 +12,6 @@
     --warm-white:#FEFCF8; --border:rgba(92,61,46,0.15);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  html,body{height:100%;}
   body{
     background:#E9E2D8;
     min-height:100vh;
@@ -56,6 +55,7 @@
   .bio-head{font-family:'Playfair Display',serif;font-size:13px;color:var(--bark);font-weight:400;margin-bottom:8px;padding-bottom:5px;border-bottom:0.5px solid var(--border);}
   .bio-text{font-size:13px;color:var(--bark-light);line-height:1.75;font-style:italic;}
   .website-link{display:inline-block;margin-top:10px;font-size:12px;color:var(--clay);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:normal;}
+  .detail-photo{width:100%;max-height:260px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block;}
 
   /* VIDEOS */
   .videos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px 18px 22px;}
@@ -68,6 +68,7 @@
   .video-title{font-family:'Playfair Display',serif;font-size:13px;color:var(--bark);font-weight:400;}
   .video-desc{font-size:11px;color:var(--bark-light);font-style:italic;margin-top:3px;}
   .video-coming{font-size:11px;color:var(--clay);font-style:italic;margin-top:4px;}
+  .video-embed{width:100%;aspect-ratio:16/9;display:block;border:0;background:#000;}
 
   /* HISTORY */
   .history-body{padding:20px 26px 28px;max-width:720px;}
@@ -142,6 +143,7 @@
     </div>
     <div class="detail-body">
       <div>
+        <img id="dPhoto" class="detail-photo" style="display:none;" alt="">
         <div class="bio-head">About the artist</div>
         <p class="bio-text" id="dBio"></p>
         <span class="website-link" id="dSite"></span>
@@ -156,40 +158,7 @@
   <!-- VIDEOS SCREEN -->
   <div id="screen-videos" class="screen">
     <div class="section-label">Artist studio visits &amp; conversations</div>
-    <div class="videos-grid">
-      <div class="video-card">
-        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
-        <div class="video-info">
-          <div class="video-title">Artist Spotlight Series</div>
-          <div class="video-desc">Meet the makers of the HAC Gallery &amp; Gift Shop</div>
-          <div class="video-coming">Videos coming soon — check back!</div>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
-        <div class="video-info">
-          <div class="video-title">Studio Visits</div>
-          <div class="video-desc">Behind the scenes in artists' workspaces</div>
-          <div class="video-coming">Videos coming soon — check back!</div>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
-        <div class="video-info">
-          <div class="video-title">Process &amp; Craft</div>
-          <div class="video-desc">Watching the work come to life</div>
-          <div class="video-coming">Videos coming soon — check back!</div>
-        </div>
-      </div>
-      <div class="video-card">
-        <div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>
-        <div class="video-info">
-          <div class="video-title">Community &amp; Place</div>
-          <div class="video-desc">Art rooted in Hillsborough &amp; Orange County</div>
-          <div class="video-coming">Videos coming soon — check back!</div>
-        </div>
-      </div>
-    </div>
+    <div class="videos-grid" id="videosGrid"></div>
   </div>
 
   <!-- HISTORY SCREEN -->
@@ -242,7 +211,7 @@
 // ======= CONFIG =======
 // Paste the URL you get from deploying the Google Apps Script web app here.
 // See the setup instructions for how to create this.
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2EcrvAYuwszRLpv1L8RzU2132cQ4VDsZBTVOZcxYSIy6aA-QS5FVrLcKQgNC2u_q-Yg/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIKHFvhQelUGlkzzz4ouxflWBtd3kXNtBW4aRF8xxh80ZQbswA5wjQoAYrBN0e0q2o/exec";
 // =======================
 
 const COLORS = ['#8A6552','#7A8C6E','#C2704A','#5C3D2E','#B8975A','#6A8A7C','#A05C7B','#8C7A42','#5E7A8C','#9A7060','#6E8C70','#7A5C8A','#8C6A3C','#5A7A8C','#8A7A5E'];
@@ -290,6 +259,35 @@ let clickCount=0, feedbackShown=false, currentScreenName='home';
 const TRIGGER=5;
 function track(){clickCount++;if(!feedbackShown&&clickCount>=TRIGGER){feedbackShown=true;setTimeout(()=>document.getElementById('feedbackOverlay').classList.add('visible'),400);}}
 
+// ===== Videos =====
+// For a self-hosted file: upload it to a "videos" folder in your GitHub repo,
+// then set src to "videos/yourfile.mp4" (keep files small — under ~50MB — for
+// fast loading; GitHub also hard-caps individual files at 100MB).
+// For a YouTube video: set youtube to just the video ID (the part after
+// "v=" in a normal YouTube URL, or after "youtu.be/"). Leave a video with
+// neither src nor youtube to show "coming soon".
+const videos = [
+  {title:"Artist Spotlight Series", desc:"Meet the makers of the HAC Gallery & Gift Shop", src:"", youtube:""},
+  {title:"Studio Visits", desc:"Behind the scenes in artists' workspaces", src:"", youtube:""},
+  {title:"Process & Craft", desc:"Watching the work come to life", src:"", youtube:""},
+  {title:"Community & Place", desc:"Art rooted in Hillsborough & Orange County", src:"", youtube:""}
+];
+
+function renderVideoCard(v){
+  let media;
+  if(v.youtube){
+    media=`<iframe class="video-embed" src="https://www.youtube.com/embed/${v.youtube}" title="${v.title}" allowfullscreen loading="lazy"></iframe>`;
+  } else if(v.src){
+    media=`<video class="video-embed" controls preload="metadata"><source src="${v.src}"></video>`;
+  } else {
+    media=`<div class="video-thumb"><div class="play-ring"><div class="play-tri"></div></div></div>`;
+  }
+  const comingNote=(!v.src&&!v.youtube)?'<div class="video-coming">Videos coming soon — check back!</div>':'';
+  return `<div class="video-card">${media}<div class="video-info"><div class="video-title">${v.title}</div><div class="video-desc">${v.desc}</div>${comingNote}</div></div>`;
+}
+
+document.getElementById('videosGrid').innerHTML = videos.map(renderVideoCard).join('');
+
 // Build grid
 const grid=document.getElementById('artistGrid');
 artists.forEach((a,i)=>{
@@ -324,6 +322,9 @@ function openDetail(a,i){
   document.getElementById('dMed').textContent=a.medium.split(',')[0];
   document.getElementById('dBio').textContent=a.bio;
   document.getElementById('dMedFull').textContent=a.medium;
+  const photoEl=document.getElementById('dPhoto');
+  if(a.photo){photoEl.src=a.photo;photoEl.alt=a.name;photoEl.style.display='block';}
+  else{photoEl.style.display='none';photoEl.removeAttribute('src');}
   const siteEl=document.getElementById('dSite');
   if(a.site){siteEl.textContent='Visit website →';siteEl.onclick=()=>window.open(a.site,'_blank');}
   else{siteEl.textContent='';}
