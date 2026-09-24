@@ -255,9 +255,16 @@ const artists = [
 
 function initials(name){const w=name.replace(/\s*[-—].*$/,'').trim().split(/\s+/);return(w[0][0]+(w[w.length-1][0]||'')).toUpperCase();}
 
-let clickCount=0, feedbackShown=false, currentScreenName='home';
-const TRIGGER=5;
-function track(){clickCount++;if(!feedbackShown&&clickCount>=TRIGGER){feedbackShown=true;setTimeout(()=>document.getElementById('feedbackOverlay').classList.add('visible'),400);}}
+let clickCount=0, currentScreenName='home';
+const TRIGGER=20;
+function track(){
+  clickCount++;
+  const overlay=document.getElementById('feedbackOverlay');
+  if(clickCount>=TRIGGER && !overlay.classList.contains('visible')){
+    clickCount=0;
+    setTimeout(()=>overlay.classList.add('visible'),400);
+  }
+}
 
 // ===== Videos =====
 // For a self-hosted file: upload it to a "videos" folder in your GitHub repo,
