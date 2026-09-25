@@ -25,7 +25,7 @@
   #kiosk{font-family:'Lora',serif;background:var(--cream);min-height:640px;border-radius:16px;overflow:hidden;border:0.5px solid var(--border);position:relative;box-shadow:0 12px 32px rgba(44,26,16,0.12);}
   .screen{display:none;}
   .screen.active{display:block;}
-
+ 
   /* NAV */
   .topbar{background:var(--bark);padding:14px 20px;display:flex;align-items:center;gap:0;flex-wrap:wrap;}
   .gallery-title{font-family:'Playfair Display',serif;color:var(--warm-white);font-size:18px;font-weight:400;letter-spacing:0.02em;flex:1;}
@@ -34,7 +34,7 @@
   .nav-tab{background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.2);border-radius:6px;color:var(--clay-light);font-family:'Lora',serif;font-size:12px;padding:6px 13px;cursor:pointer;transition:background 0.15s,color 0.15s;}
   .nav-tab:hover{background:rgba(255,255,255,0.18);}
   .nav-tab.active{background:var(--clay);color:var(--warm-white);border-color:var(--clay);}
-
+ 
   /* HOME — artists */
   .section-label{font-family:'Playfair Display',serif;font-size:13px;color:var(--bark-light);font-style:italic;padding:14px 20px 6px;border-bottom:0.5px solid var(--border);margin-bottom:4px;}
   .artist-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 16px 20px;}
@@ -44,7 +44,7 @@
   .avatar{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:17px;color:var(--warm-white);font-weight:400;}
   .card-name{font-family:'Playfair Display',serif;font-size:12px;color:var(--bark);font-weight:400;line-height:1.3;}
   .card-medium{font-size:10px;color:var(--bark-light);font-style:italic;margin-top:2px;}
-
+ 
   /* ARTIST DETAIL */
   .detail-topbar{background:var(--bark);padding:12px 18px;display:flex;align-items:center;gap:12px;}
   .back-btn{background:rgba(255,255,255,0.12);border:0.5px solid rgba(255,255,255,0.25);border-radius:6px;color:var(--warm-white);font-family:'Lora',serif;font-size:12px;padding:5px 12px;cursor:pointer;flex-shrink:0;transition:background 0.15s;}
@@ -56,7 +56,7 @@
   .bio-text{font-size:13px;color:var(--bark-light);line-height:1.75;font-style:italic;}
   .website-link{display:inline-block;margin-top:10px;font-size:12px;color:var(--clay);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-style:normal;}
   .detail-photo{width:100%;max-height:500px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block;}
-
+ 
   /* VIDEOS */
   .videos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px 18px 22px;}
   .video-card{background:var(--warm-white);border-radius:10px;border:0.5px solid var(--border);overflow:hidden;cursor:pointer;transition:transform 0.15s;user-select:none;}
@@ -69,7 +69,8 @@
   .video-desc{font-size:11px;color:var(--bark-light);font-style:italic;margin-top:3px;}
   .video-coming{font-size:11px;color:var(--clay);font-style:italic;margin-top:4px;}
   .video-embed{width:100%;aspect-ratio:16/9;display:block;border:0;background:#000;}
-
+  .video-card.highlight{outline:2px solid var(--clay);box-shadow:0 0 0 5px var(--clay-light);}
+ 
   /* HISTORY */
   .history-body{padding:20px 26px 28px;max-width:720px;}
   .history-head{font-family:'Playfair Display',serif;font-size:20px;color:var(--bark);font-weight:400;margin-bottom:6px;}
@@ -77,7 +78,7 @@
   .history-section{margin-bottom:18px;}
   .history-section h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--bark);font-weight:400;margin-bottom:7px;padding-bottom:5px;border-bottom:0.5px solid var(--border);}
   .history-section p{font-size:13px;color:var(--bark-light);line-height:1.8;font-style:italic;}
-
+ 
   /* FEEDBACK OVERLAY */
   .feedback-overlay{display:none;position:absolute;inset:0;background:rgba(44,26,16,0.55);align-items:center;justify-content:center;z-index:10;border-radius:16px;}
   .feedback-overlay.visible{display:flex;animation:fadeIn 0.3s ease;}
@@ -97,7 +98,7 @@
   .comment-section textarea:focus{outline:1px solid var(--clay);}
   .send-btn{margin-top:10px;width:100%;background:var(--clay);color:var(--warm-white);border:none;border-radius:8px;padding:9px 0;font-family:'Lora',serif;font-size:12px;cursor:pointer;transition:background 0.15s;}
   .send-btn:hover{background:var(--bark);}
-
+ 
   /* Responsive */
   @media (max-width:640px){
     .artist-grid{grid-template-columns:repeat(2,1fr);}
@@ -112,7 +113,7 @@
 <div class="page-wrap">
 <div id="kiosk" aria-label="Hillsborough Arts Council gallery kiosk">
   <h2 class="sr-only" style="position:absolute;left:-9999px;">Hillsborough Arts Council gallery kiosk — browse artists, watch videos, and learn about the arts.</h2>
-
+ 
   <!-- TOPBAR -->
   <div class="topbar">
     <div style="flex:1">
@@ -125,13 +126,13 @@
       <button class="nav-tab" data-screen="history">History of the Art</button>
     </div>
   </div>
-
+ 
   <!-- ARTISTS SCREEN -->
   <div id="screen-home" class="screen active">
     <div class="section-label">Tap an artist to read their story</div>
     <div class="artist-grid" id="artistGrid"></div>
   </div>
-
+ 
   <!-- ARTIST DETAIL SCREEN -->
   <div id="screen-detail" class="screen">
     <div class="detail-topbar">
@@ -147,6 +148,7 @@
         <div class="bio-head">About the artist</div>
         <p class="bio-text" id="dBio"></p>
         <span class="website-link" id="dSite"></span>
+        <br><span class="website-link" id="dVideoLink"></span>
       </div>
       <div>
         <div class="bio-head">Medium</div>
@@ -154,13 +156,13 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- VIDEOS SCREEN -->
   <div id="screen-videos" class="screen">
     <div class="section-label">Artist studio visits &amp; conversations</div>
     <div class="videos-grid" id="videosGrid"></div>
   </div>
-
+ 
   <!-- HISTORY SCREEN -->
   <div id="screen-history" class="screen">
     <div class="history-body">
@@ -184,7 +186,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- FEEDBACK OVERLAY -->
   <div class="feedback-overlay" id="feedbackOverlay">
     <div class="feedback-card">
@@ -206,16 +208,16 @@
   </div>
 </div>
 </div>
-
+ 
 <script>
 // ======= CONFIG =======
 // Paste the URL you get from deploying the Google Apps Script web app here.
 // See the setup instructions for how to create this.
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJTa6tmQ7baYV9g1SdSNt-CAedBWgLYmLZ7QLCkpV3rbD_YuA-5yIcYtk2l9av6r5Rfw/exec";
 // =======================
-
+ 
 const COLORS = ['#8A6552','#7A8C6E','#C2704A','#5C3D2E','#B8975A','#6A8A7C','#A05C7B','#8C7A42','#5E7A8C','#9A7060','#6E8C70','#7A5C8A','#8C6A3C','#5A7A8C','#8A7A5E'];
-
+ 
 const artists = [
   {name:"Fabrizio Bianchi", medium: "Painting", bio: "Business professional with years of experience creating dynamic branding and marketing strategies for all client's needs (cover-to-cover proposal designs, presentations, posters, brochures, email announcements, logos, icons, infographics, maps, and more). Experienced in AI tools for data storytelling and visualizations. Advanced in Adobe and Microsoft Office applications. Bilingual Spanish speaker.", site: "https://www.instagram.com/fabzart21/?hl=en", photo: "images/fabrizio.png", video: ""},
   {name:"Grey Brown", medium: "Ceramic Mixed Media", bio: "Grey began making her “spirits” from clothespins, polymer clay, feathers and pom-poms. As she continued in clay, these figures evolved into ceramic pieces. She hand paints each figure with three layers of glaze to obtain their rich colors and adorns them with shells collected at the beach, feathers and upcycled jewelry", site: "https://www.grey-spiral.com/", photo: "images/gray brown.png", video: ""},
@@ -285,9 +287,9 @@ const artists = [
   {name:"Anita Faulkner",medium:"Glasswork, Stained & Fused Glass",bio:"Sweet mystery of life — I have finally found you! GLASS! I held a piece of blue glass to the light and felt like the sky was in my hands. I was hooked and had to learn how to create art with glass. It is a forever learning experience and there is not one minute that I don't appreciate creating art with this beautiful substance. I hope you enjoy my art as much as I enjoy making it!",site:"", photo:"images/anita.png", video: ""},
   {name:"Lynn Burcher — Gilded Lily Glass",medium:"Jewelry",bio:"I create colorful jewelry combining hand-painted enamel, torchwork glass beads, and traditional metal techniques. My current enameling technique is reflective of my interest in printmaking and illustration. I make silkscreens from my drawings to use for the outlines of images on enameled copper bases, then paint the details with vintage china paints and watercolor enamels. Each piece is typically fired in a kiln 5 to 10 times.",site:"https://www.gildedlilyglass.com", photo:"images/Lynn B.avif", video: ""}
 ];
-
+ 
 function initials(name){const w=name.replace(/\s*[-—].*$/,'').trim().split(/\s+/);return(w[0][0]+(w[w.length-1][0]||'')).toUpperCase();}
-
+ 
 let clickCount=0, currentScreenName='home';
 const TRIGGER=20;
 function track(){
@@ -298,7 +300,7 @@ function track(){
     setTimeout(()=>overlay.classList.add('visible'),400);
   }
 }
-
+ 
 // ===== Videos =====
 // For a self-hosted file: upload it to a "videos" folder in your GitHub repo,
 // then set src to "videos/yourfile.mp4" (keep files small — under ~50MB — for
@@ -360,7 +362,7 @@ function showScreen(id){
   document.getElementById('screen-'+id).classList.add('active');
   currentScreenName=id;
 }
-
+ 
 // Nav tabs
 document.querySelectorAll('.nav-tab').forEach(tab=>{
   tab.addEventListener('click',()=>{
@@ -373,7 +375,7 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     track();
   });
 });
-
+ 
 function openDetail(a,i){
   document.getElementById('dName').textContent=a.name;
   document.getElementById('dMed').textContent=a.medium.split(',')[0];
@@ -385,20 +387,23 @@ function openDetail(a,i){
   const siteEl=document.getElementById('dSite');
   if(a.site){siteEl.textContent='Visit website →';siteEl.onclick=()=>window.open(a.site,'_blank');}
   else{siteEl.textContent='';}
+  const videoEl=document.getElementById('dVideoLink');
+  if(a.video){videoEl.textContent='Watch their video →';videoEl.onclick=()=>goToVideo(a.video);}
+  else{videoEl.textContent='';}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-detail').classList.add('active');
   currentScreenName='detail: '+a.name;
 }
-
+ 
 document.getElementById('backBtn').addEventListener('click',()=>{
   showScreen('home');
   document.querySelectorAll('.nav-tab').forEach(t=>{t.classList.toggle('active',t.dataset.screen==='home');});
   track();
 });
-
+ 
 // ===== Feedback =====
 let selectedRating = null;
-
+ 
 document.querySelectorAll('.emoji-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     selectedRating = btn.dataset.label;
@@ -407,7 +412,7 @@ document.querySelectorAll('.emoji-btn').forEach(btn=>{
     document.getElementById('commentSection').style.display='block';
   });
 });
-
+ 
 function submitFeedback(){
   const comment = document.getElementById('feedbackComment').value.trim();
   const payload = {
@@ -416,7 +421,7 @@ function submitFeedback(){
     comment: comment,
     screen: currentScreenName
   };
-
+ 
   if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.indexOf('PASTE_YOUR') === -1) {
     fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
@@ -427,7 +432,7 @@ function submitFeedback(){
   } else {
     console.warn('Feedback captured locally (no spreadsheet URL configured yet):', payload);
   }
-
+ 
   document.getElementById('emojiRow').style.display='none';
   document.getElementById('commentSection').style.display='none';
   document.querySelector('.skip-btn').style.display='none';
@@ -446,7 +451,7 @@ function submitFeedback(){
     }, 500);
   },1800);
 }
-
+ 
 document.getElementById('sendFeedbackBtn').addEventListener('click', submitFeedback);
 document.getElementById('skipBtn').addEventListener('click',()=>{
   document.getElementById('feedbackOverlay').classList.remove('visible');
